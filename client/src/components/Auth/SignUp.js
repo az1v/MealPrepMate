@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import axios from '../../axiosInstance';
+
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from "../Contexts/UserContext";
 
@@ -15,6 +15,7 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    const newUser = { email, name, password }; //  Define newUser before sending
     try {
         const response = await fetch("/signUp", {
             method: "POST",
@@ -24,13 +25,14 @@ const SignUp = () => {
             body: JSON.stringify(newUser)
         });
         const result = await response.json();
-        if (response.status === 201) {
-            setCurrentUser(result.data);
-            logIn(result.data)
+        if (response.ok) {
+            setCurrentUser(result.user);
+            logIn(result.user)
             setEmail("");
             setName("");
             setError("");
             setSuccessMessage("Sign up successful!");
+            setTimeout(() => navigate("/"), 2000); // ✅ Redirect to home after signup
         } else {
             setError(result.message);
         }

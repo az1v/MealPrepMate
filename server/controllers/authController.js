@@ -8,7 +8,7 @@ const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, u
 // Sign-up logic (No encryption or hashing)
 const signUp = async (req, res) => {
   const { email, password, name } = req.body;
-  const client = new MongoClient(MONGO_URI);
+  const client = new MongoClient(process.env.MONGO_URI);
   if (!email || !name || !password) {
     return res.status(400).json({
         status: 400,
@@ -33,16 +33,17 @@ const signUp = async (req, res) => {
       name,
       favorites: []
     };
-
+console.log("hello")
     // Insert new user into the database
-    await usersCollection.insertOne(newUser);
+    
+    const result = await usersCollection.insertOne(newUser);
     if (!result.acknowledged) {
         return res.status(500).json({
             status: 500,
             message: "Failed to create user."
         });
     }
-
+console.log("hi")
     res.status(201).json({ message: 'User created successfully', user: { name: newUser.name, email: newUser.email } });
   } catch (error) {
     res.status(500).json({ message: 'Error during sign-up', error });

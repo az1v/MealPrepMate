@@ -6,6 +6,7 @@ const { MongoClient } = require('mongodb');
 const cors = require('cors');
 dotenv.config();
 
+
 const app = express();
 app.use(express.json());
 app.use(cors({
@@ -14,18 +15,87 @@ app.use(cors({
   allowedHeaders: 'Content-Type,Authorization',
   credentials: true
 }));
+
+
+
 app.use(require('./routes/recipes'));
-app.use(require('./routes/auth'))
+app.use(require('./routes/auth'));
+
+
 app.get('/recipes', async (req, res) => {
+  
+
+  const pluralize = require('pluralize');
+// Utility functions
+function toSingular(word) {
+  return pluralize.singular(word);
+}
+
+function toPlural(word) {
+  return pluralize.plural(word);
+}
+
   const { ingredients } = req.query;
-  if (!ingredients) return res.status(400).json({ error: "Ingredients are required" });
+
+  if (!ingredients) {
+    return res.status(400).json({ error: 'No ingredients provided' });
+  }
+
+  const ingredientsList = ingredients
+    .split(',')
+    .map((i) => i.trim().toLowerCase())
+    .filter(Boolean); // remove empty strings
+
+  if (ingredientsList.length === 0) {
+    return res.status(400).json({ error: 'No valid ingredients provided' });
+  }
 
   try {
-      const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredients}`);
-      const data = await response.json();
-      res.json(data.meals || []);
-  } catch (err) {
-      res.status(500).json({ error: "Failed to fetch recipes" });
+    const allResults = [];
+
+    for (const ingredient of ingredientsList) {
+      const variations = Array.from(new Set([
+        ingredient,
+        toSingular(ingredient),
+        toPlural(ingredient)
+      ]));
+
+      const resultsForThisIngredient = [];
+
+      for (const variant of variations) {
+        const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${variant}`);
+        const data = await response.json();
+
+        if (data.meals) {
+          resultsForThisIngredient.push(...data.meals);
+        }
+      }
+
+      if (resultsForThisIngredient.length === 0) {
+        return res.json([]); // No matches for this ingredient
+      }
+
+      allResults.push(resultsForThisIngredient);
+    }
+
+    // Intersect by meal ID
+    const commonMealIds = allResults
+      .map(meals => new Set(meals.map(meal => meal.idMeal)))
+      .reduce((acc, set) => {
+        return new Set([...acc].filter(id => set.has(id)));
+      });
+
+    const finalMeals = allResults
+      .flat()
+      .filter((meal, index, self) =>
+        commonMealIds.has(meal.idMeal) &&
+        index === self.findIndex(m => m.idMeal === meal.idMeal)
+      );
+
+    res.json(finalMeals);
+  } catch (error) {
+    console.error('Error fetching from TheMealDB:', error);
+    res.status(500).json({ error: 'Failed to fetch recipes' });
   }
 });
 // Session configuration
