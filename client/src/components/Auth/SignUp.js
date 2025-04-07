@@ -33,7 +33,7 @@ const SignUp = () => {
             setError("");
             setSuccessMessage("Sign up successful!");
             setTimeout(() => navigate("/"), 2000); // ✅ Redirect to home after signup
-        } else {
+        }  else {
             setError(result.message);
         }
     } catch (error) {

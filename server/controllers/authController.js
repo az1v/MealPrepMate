@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb');
 const dotenv = require('dotenv');
+const bcrypt = require("bcryptjs");
 dotenv.config();
 
 // MongoDB client
@@ -53,9 +54,9 @@ console.log("hi")
 };
 
 // Login logic
-const login = async (req, res) => {
+const signIn = async (req, res) => {
   const { email, password } = req.body;
-  const client = new MongoClient(MONGO_URI);
+  const client = new MongoClient(process.env.MONGO_URI);
   if (!email) {
     return res.status(400).json({
         status: 400,
@@ -82,4 +83,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signUp, login };
+module.exports = { signUp, signIn };
