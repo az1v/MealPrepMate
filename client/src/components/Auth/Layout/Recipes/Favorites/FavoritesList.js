@@ -96,7 +96,7 @@ const FavoritesList = () => {
             </RecipeLink>
             <Thumbnail src={recipe.strMealThumb} alt={recipe.strMeal} />
             <RemoveButton onClick={() => removeFavorite(recipe.idMeal)}>
-              ❌ Remove
+               Remove
             </RemoveButton>
           </RecipeCard>
         ))

@@ -148,7 +148,7 @@ const GroceryList = () => {
             {groceryList.map((item, index) => (
               <ListItem key={index}>
                 {item}
-                <RemoveButton onClick={() => removeItem(item)}>❌ Remove</RemoveButton>
+                <RemoveButton onClick={() => removeItem(item)}> Remove</RemoveButton>
               </ListItem>
             ))}
           </List>

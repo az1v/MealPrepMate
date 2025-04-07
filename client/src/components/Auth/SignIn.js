@@ -90,6 +90,22 @@ const SignIn = () => {
   const navigate = useNavigate();
   const { currentUser, setCurrentUser } = useContext(UserContext);
 
+  // Working logout handler
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:8000/signout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      setCurrentUser(null);
+      localStorage.removeItem("currentUser");
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
   const handleSubmit = async (ev) => {
     ev.preventDefault();
     setShowError(false);
@@ -103,6 +119,7 @@ const SignIn = () => {
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -114,6 +131,7 @@ const SignIn = () => {
         setError(data.message || "Could not log in. Please try again.");
       } else {
         setCurrentUser(data.user);
+        localStorage.setItem("currentUser", JSON.stringify(data.user)); // Optional
         navigate("/");
       }
     } catch (err) {
@@ -127,7 +145,8 @@ const SignIn = () => {
     <Container>
       {currentUser ? (
         <Section>
-          <Paragraph>You're already signed in.</Paragraph>
+          <Paragraph>You're already signed in as <strong>{currentUser.email}</strong>.</Paragraph>
+          <Button onClick={handleLogout}>🚪 Log Out</Button>
         </Section>
       ) : (
         <>

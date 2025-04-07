@@ -17,6 +17,17 @@ app.use(cors({
 }));
 
 
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false, // Only save sessions when something is stored
+  cookie: {
+    httpOnly: true,
+    secure: false, // set to true if using HTTPS
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+  }
+}));
 
 app.use(require('./routes/recipes'));
 app.use(require('./routes/auth'));
@@ -98,15 +109,7 @@ function toPlural(word) {
     res.status(500).json({ error: 'Failed to fetch recipes' });
   }
 });
-// Session configuration
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false } // set to true if using https
-  })
-);
+
 
 const client = new MongoClient(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 let usersCollection;
@@ -180,14 +183,21 @@ app.post('/signin', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
-
+app.get('/session', (req, res) => {
+  if (req.session.user) {
+    res.status(200).json({ user: req.session.user });
+  } else {
+    res.status(401).json({ message: 'Not authenticated' });
+  }
+});
 // SIGN OUT Route
-app.post('/signout', (req, res) => {
-  req.session.destroy((err) => {
+app.post("/signout", (req, res) => {
+  req.session.destroy(err => {
     if (err) {
-      return res.status(500).json({ message: 'Error signing out' });
+      return res.status(500).json({ message: "Error logging out" });
     }
-    res.status(200).json({ message: 'User logged out successfully' });
+    res.clearCookie("connect.sid"); // clear cookie
+    res.status(200).json({ message: "Logged out" });
   });
 });
 

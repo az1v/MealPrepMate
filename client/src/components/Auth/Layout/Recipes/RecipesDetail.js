@@ -157,7 +157,7 @@ const RecipesDetail = () => {
       <TitleRow>
         <Title>{recipe.strMeal}</Title>
         <FavoriteButton onClick={toggleFavorite}>
-          {isFavorited() ? '❌ Remove from Favorites' : '❤️ Add to Favorites'}
+          {isFavorited() ? ' Remove from Favorites' : ' Add to Favorites'}
         </FavoriteButton>
       </TitleRow>
       <Image src={recipe.strMealThumb} alt={recipe.strMeal} />

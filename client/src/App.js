@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SignUp from '../src/components/Auth/SignUp';
 import SignIn from '../src/components/Auth/SignIn';
@@ -10,11 +10,14 @@ import Home from "./components/Home";
 import RecipesDetail from '../src/components/Auth/Layout/Recipes/RecipesDetail'; // Adjust path as needed
 
 function App() {
+
+   
   return (
     <Router>
       <Header />
 
       <div className="App">
+        
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />

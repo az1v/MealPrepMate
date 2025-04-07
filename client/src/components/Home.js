@@ -49,7 +49,7 @@ function Home() {
   return (
     <HomeWrapper>
       <Title>WELCOME TO MealPrepMate</Title>
-      <Subtitle>Where you can get recipes by ingredients.</Subtitle>
+      <Subtitle>Where you can get recipes by ingredients, add them to your favorites list and create a grocery list of the missing ingredients</Subtitle>
 
       {!currentUser ? (
         <Paragraph>
