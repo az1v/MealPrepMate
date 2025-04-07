@@ -1,77 +1,108 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { UserContext } from '../../../../Contexts/UserContext';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
-// Function to fetch favorite meals for a user
-const fetchFavorites = async (email) => {
-    const response = await fetch(`/favorites?email=${email}`);
-    const data = await response.json();
-    return data;
-};
+// Styled Components
+const Wrapper = styled.div`
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+`;
 
-// Function to remove a meal from favorites
-const removeFromFavorites = async (email, mealId) => {
-    await fetch(`/favorites/${mealId}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-    });
-};
+const Heading = styled.h2`
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+`;
 
-const FavoriteList = () => {
-    const { currentUser } = useContext(UserContext);
-    const [favorites, setFavorites] = useState([]);
-    const [error, setError] = useState(null);
+const Message = styled.p`
+  font-size: 1rem;
+  color: #666;
+`;
 
-    useEffect(() => {
-        if (!currentUser) return;
+const RecipeCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+`;
 
-        const getFavorites = async () => {
-            try {
-                const data = await fetchFavorites(currentUser.email);
-                setFavorites(data);
-            } catch (err) {
-                setError('Error fetching favorite meals');
-            }
-        };
+const RecipeLink = styled(Link)`
+  text-decoration: none;
+  color: inherit;
 
-        getFavorites();
-    }, [currentUser]);
-
-    const handleRemoveFavorite = async (mealId) => {
-        try {
-            await removeFromFavorites(currentUser.email, mealId);
-            setFavorites(favorites.filter((meal) => meal.idMeal !== mealId)); // Update UI
-        } catch (err) {
-            setError('Error removing favorite meal');
-        }
-    };
-
-    if (!currentUser) {
-        return <p>Please log in to see your favorite meals.</p>;
+  h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+    &:hover {
+      text-decoration: underline;
     }
+  }
+`;
 
-    return (
-        <div>
-            <h2>Your Favorite Meals</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <ul>
-                {favorites.length > 0 ? (
-                    favorites.map((meal) => (
-                        <li key={meal.idMeal}>
-                            <p>{meal.strMeal}</p>
-                            <button onClick={() => handleRemoveFavorite(meal.idMeal)}>
-                                Remove from Favorites
-                            </button>
-                        </li>
-                    ))
-                ) : (
-                    <p>No favorite meals found.</p>
-                )}
-            </ul>
-        </div>
-    );
+const Thumbnail = styled.img`
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 0.8rem;
+`;
+
+const RemoveButton = styled.button`
+  align-self: flex-start;
+  background-color: #ff3366;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: #cc2952;
+  }
+`;
+
+const FavoritesList = () => {
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    setFavorites(storedFavorites);
+  }, []);
+
+  const removeFavorite = (idMeal) => {
+    const updated = favorites.filter((recipe) => recipe.idMeal !== idMeal);
+    setFavorites(updated);
+    localStorage.setItem('favorites', JSON.stringify(updated));
+  };
+
+  return (
+    <Wrapper>
+      <Heading>Your Favorite Recipes</Heading>
+      {favorites.length === 0 ? (
+        <Message>You haven't added any favorites yet.</Message>
+      ) : (
+        favorites.map((recipe) => (
+          <RecipeCard key={recipe.idMeal}>
+            <RecipeLink to={`/recipes/${recipe.idMeal}`}>
+              <h3>{recipe.strMeal}</h3>
+            </RecipeLink>
+            <Thumbnail src={recipe.strMealThumb} alt={recipe.strMeal} />
+            <RemoveButton onClick={() => removeFavorite(recipe.idMeal)}>
+              ❌ Remove
+            </RemoveButton>
+          </RecipeCard>
+        ))
+      )}
+    </Wrapper>
+  );
 };
 
-export default FavoriteList;
+export default FavoritesList;

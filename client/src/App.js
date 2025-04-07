@@ -8,28 +8,26 @@ import FavoritesList from '../src/components/Auth/Layout/Recipes/Favorites/Favor
 import GroceryList from '../src/components/Auth/Layout/Recipes/Favorites/GroceryList/GroceryList';
 import Home from "./components/Home";
 import RecipesDetail from '../src/components/Auth/Layout/Recipes/RecipesDetail'; // Adjust path as needed
+
 function App() {
   return (
     <Router>
-         <Header />
+      <Header />
 
       <div className="App">
         <Routes>
-     
-        <Route path="/" element={<Home/>} />
-       <Route path="/signin" element={<SignIn/>} />
-        <Route path="/signup" element={<SignUp />} />
-          <Route path="/recipes" element={<RecipeList/>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/recipes" element={<RecipeList />} />
           <Route path="/recipes/:id" element={<RecipesDetail />} />
-          <Route path="/favorites" element={<FavoritesList/>} />
-          <Route path="/grocery-list" element={<GroceryList/>} />
-          
-      
-      </Routes>
+          <Route path="/favorites" element={<FavoritesList />} />
+          <Route path="/grocery-list" element={<GroceryList />} />
+          <Route path="*" element={<p>Page Not Found</p>} />
+        </Routes>
       </div>
     </Router>
   );
 }
 
 export default App;
-
