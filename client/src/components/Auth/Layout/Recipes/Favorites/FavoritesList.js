@@ -28,7 +28,7 @@ const RecipeCard = styled.div`
   padding: 1rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  background-color: #fff;
+  background-color: whitesmoke;
 `;
 
 const RecipeLink = styled(Link)`

@@ -4,7 +4,7 @@ import { UserContext } from "../../src/components/Contexts/UserContext";
 import styled from "styled-components";
 
 const Nav = styled.nav`
-  background-color: #ffffff;
+  background-color: silver;
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,7 +30,7 @@ const NavItem = styled.li`
     transition: color 0.3s ease;
 
     &:hover {
-      color: #0077ff;
+      color: #ff3366;
     }
   }
 `;

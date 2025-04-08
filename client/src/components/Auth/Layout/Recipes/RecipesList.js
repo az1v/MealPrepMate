@@ -49,7 +49,7 @@ const RecipeCard = styled.div`
   border-radius: 12px;
   overflow: hidden;
   padding: 1rem;
-  background-color: #fff;
+  background-color: whitesmoke;
   transition: box-shadow 0.2s;
 
   &:hover {
@@ -121,7 +121,7 @@ const RecipeList = () => {
 
   return (
     <Wrapper>
-      <h2>Recipe List</h2>
+      <h1>Recipe List</h1>
       <SearchBar>
         <input
           type="text"

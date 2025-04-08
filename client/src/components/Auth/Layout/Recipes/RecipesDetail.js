@@ -170,7 +170,7 @@ const RecipesDetail = () => {
         {getIngredients().map((item, index) => (
           <IngredientItem key={index}>
             {item}
-            <AddButton onClick={() => addToGroceryList(item)}>🛒 Add</AddButton>
+            <AddButton onClick={() => addToGroceryList(item)}>Add to Grocery List</AddButton>
           </IngredientItem>
         ))}
       </IngredientList>
