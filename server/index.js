@@ -28,9 +28,7 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
   }
 }));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-});
+
 app.use(require('./routes/recipes'));
 app.use(require('./routes/auth'));
 

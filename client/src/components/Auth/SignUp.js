@@ -115,7 +115,7 @@ const SignUp = () => {
         setPassword('');
         setError('');
         setSuccessMessage("Sign up successful!");
-        setTimeout(() => navigate("/mealprepmate"), 2000);
+        setTimeout(() => navigate("/"), 2000);
       } else {
         setError(result.message);
       }
