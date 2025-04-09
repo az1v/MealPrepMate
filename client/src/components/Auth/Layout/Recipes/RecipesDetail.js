@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
-// Styled Components
 const Wrapper = styled.div`
   max-width: 900px;
   margin: 2rem auto;
@@ -90,10 +89,19 @@ const AddButton = styled.button`
   }
 `;
 
+const RemoveButton = styled(AddButton)`
+  background-color: #e63946;
+
+  &:hover {
+    background-color: #c82333;
+  }
+`;
+
 const RecipesDetail = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
   const [favorites, setFavorites] = useState([]);
+  const [groceryList, setGroceryList] = useState([]);
 
   useEffect(() => {
     const fetchRecipeDetail = async () => {
@@ -106,8 +114,8 @@ const RecipesDetail = () => {
       }
     };
 
-    const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    setFavorites(storedFavorites);
+    setFavorites(JSON.parse(localStorage.getItem("favorites")) || []);
+    setGroceryList(JSON.parse(localStorage.getItem("groceryList")) || []);
 
     fetchRecipeDetail();
   }, [id]);
@@ -124,14 +132,16 @@ const RecipesDetail = () => {
     return ingredients;
   };
 
-  const addToGroceryList = (item) => {
-    const stored = JSON.parse(localStorage.getItem('groceryList')) || [];
-    if (!stored.includes(item)) {
-      const updated = [...stored, item];
-      localStorage.setItem('groceryList', JSON.stringify(updated));
-      alert(`Added "${item}" to your grocery list!`);
+  const updateGroceryList = (updatedList) => {
+    setGroceryList(updatedList);
+    localStorage.setItem('groceryList', JSON.stringify(updatedList));
+  };
+
+  const toggleGroceryItem = (item) => {
+    if (groceryList.includes(item)) {
+      updateGroceryList(groceryList.filter(i => i !== item));
     } else {
-      alert(`"${item}" is already in your grocery list.`);
+      updateGroceryList([...groceryList, item]);
     }
   };
 
@@ -140,12 +150,10 @@ const RecipesDetail = () => {
   };
 
   const toggleFavorite = () => {
-    let updatedFavorites;
-    if (isFavorited()) {
-      updatedFavorites = favorites.filter((fav) => fav.idMeal !== recipe.idMeal);
-    } else {
-      updatedFavorites = [...favorites, recipe];
-    }
+    const updatedFavorites = isFavorited()
+      ? favorites.filter((fav) => fav.idMeal !== recipe.idMeal)
+      : [...favorites, recipe];
+
     setFavorites(updatedFavorites);
     localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
   };
@@ -170,7 +178,11 @@ const RecipesDetail = () => {
         {getIngredients().map((item, index) => (
           <IngredientItem key={index}>
             {item}
-            <AddButton onClick={() => addToGroceryList(item)}>Add to Grocery List</AddButton>
+            {groceryList.includes(item) ? (
+              <RemoveButton onClick={() => toggleGroceryItem(item)}>Remove from Grocery List</RemoveButton>
+            ) : (
+              <AddButton onClick={() => toggleGroceryItem(item)}>Add to Grocery List</AddButton>
+            )}
           </IngredientItem>
         ))}
       </IngredientList>

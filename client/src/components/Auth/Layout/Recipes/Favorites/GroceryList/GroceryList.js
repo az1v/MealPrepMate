@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-// Styled Components
 const Wrapper = styled.div`
   max-width: 800px;
   margin: 2rem auto;
@@ -57,19 +56,49 @@ const ListItem = styled.li`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
 `;
 
-const RemoveButton = styled.button`
+const ListText = styled.span`
+  flex: 1;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const SmallButton = styled.button`
   background-color: transparent;
-  border: 1px solid #ff3366;
-  color: #ff3366;
+  border: 1px solid #555;
+  color: #555;
   padding: 0.3rem 0.6rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.85rem;
 
   &:hover {
+    background-color: #555;
+    color: white;
+  }
+`;
+
+const RemoveButton = styled(SmallButton)`
+  border-color: #ff3366;
+  color: #ff3366;
+
+  &:hover {
     background-color: #ff3366;
+    color: white;
+  }
+`;
+
+const SaveButton = styled(SmallButton)`
+  border-color: #0077ff;
+  color: #0077ff;
+
+  &:hover {
+    background-color: #0077ff;
     color: white;
   }
 `;
@@ -97,6 +126,8 @@ const EmptyMessage = styled.p`
 const GroceryList = () => {
   const [groceryList, setGroceryList] = useState([]);
   const [newItem, setNewItem] = useState('');
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editedItem, setEditedItem] = useState('');
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem('groceryList')) || [];
@@ -127,6 +158,25 @@ const GroceryList = () => {
     }
   };
 
+  const startEditing = (index, currentValue) => {
+    setEditingIndex(index);
+    setEditedItem(currentValue);
+  };
+
+  const saveEdit = () => {
+    const trimmed = editedItem.trim();
+    if (!trimmed || groceryList.includes(trimmed)) {
+      setEditingIndex(null);
+      return;
+    }
+
+    const updated = [...groceryList];
+    updated[editingIndex] = trimmed;
+    updateStorage(updated);
+    setEditingIndex(null);
+    setEditedItem('');
+  };
+
   return (
     <Wrapper>
       <Title>🛒 Grocery List</Title>
@@ -147,8 +197,24 @@ const GroceryList = () => {
           <List>
             {groceryList.map((item, index) => (
               <ListItem key={index}>
-                {item}
-                <RemoveButton onClick={() => removeItem(item)}> Remove</RemoveButton>
+                {editingIndex === index ? (
+                  <>
+                    <Input
+                      value={editedItem}
+                      onChange={(e) => setEditedItem(e.target.value)}
+                      autoFocus
+                    />
+                    <SaveButton onClick={saveEdit}>Save</SaveButton>
+                  </>
+                ) : (
+                  <>
+                    <ListText>{item}</ListText>
+                    <ButtonGroup>
+                      <SmallButton onClick={() => startEditing(index, item)}>Edit</SmallButton>
+                      <RemoveButton onClick={() => removeItem(item)}>Remove</RemoveButton>
+                    </ButtonGroup>
+                  </>
+                )}
               </ListItem>
             ))}
           </List>
