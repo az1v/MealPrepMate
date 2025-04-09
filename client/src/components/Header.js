@@ -59,7 +59,7 @@ const Header = () => {
     <Nav>
       <NavList>
         <LeftGroup>
-          <NavItem><Link to="/">Home</Link></NavItem>
+          <NavItem><Link to="/mealprepmate">Home</Link></NavItem>
         </LeftGroup>
 
         <RightGroup>
@@ -74,7 +74,7 @@ const Header = () => {
               <NavItem><Link to="/recipes">Recipes</Link></NavItem>
               <NavItem><Link to="/favorites">Favorites</Link></NavItem>
               <NavItem><Link to="/grocery-list">Grocery List</Link></NavItem>
-              <NavItem><Link to="/" onClick={logOut}>Log Out</Link></NavItem>
+              <NavItem><Link to="/mealprepmate" onClick={logOut}>Log Out</Link></NavItem>
             </>
           )}
         </RightGroup>

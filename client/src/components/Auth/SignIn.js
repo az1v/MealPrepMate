@@ -132,7 +132,7 @@ const SignIn = () => {
       } else {
         setCurrentUser(data.user);
         localStorage.setItem("currentUser", JSON.stringify(data.user)); // Optional
-        navigate("/");
+        navigate("/mealprepmate");
       }
     } catch (err) {
       setStatus("idle");
