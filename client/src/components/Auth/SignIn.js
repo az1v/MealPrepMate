@@ -93,7 +93,7 @@ const SignIn = () => {
   // Working logout handler
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:8000/signout", {
+      await fetch("/signout", {
         method: "POST",
         credentials: "include",
       });
@@ -113,7 +113,7 @@ const SignIn = () => {
     setStatus("logging");
 
     try {
-      const response = await fetch('http://localhost:8000/signin', {
+      const response = await fetch('/signin', {
         method: "POST",
         headers: {
           "Accept": "application/json",
